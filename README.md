@@ -61,7 +61,7 @@ airlines-poo/
 ```
 
 Cada paquete de módulo trae los subpaquetes `model`, `repository`, `service` y `ui`
-(cada uno con un `package-info.java` que describe qué va allí y permite que Git conserve
+(cada uno con un `Airlines.java` que describe qué va allí y permite que Git conserve
 la carpeta vacía).
 
 **Regla de dependencia:** `ui` → `service` → `repository` → `model`. Nunca al revés.
