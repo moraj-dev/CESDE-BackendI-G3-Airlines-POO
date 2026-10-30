@@ -131,4 +131,8 @@ public final class Validator {
         }
         return value.trim().replaceAll("\\s+", " ");
     }
+
+    public static void validatePositive(int id, String id1) {
+
+    }
 }
