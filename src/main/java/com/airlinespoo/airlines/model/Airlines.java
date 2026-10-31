@@ -27,7 +27,7 @@ public class Airlines implements Identifiable<Integer> {
     // Setter con validaciones obligatorias y de longitud máxima
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new ValidationException("El nombre de la aerolínea es obligatorio");
+            throw new ValidationException("El nombre de la aerolínea es obligatoria");
         }
         if (name.length() > 50) {
             throw new ValidationException("El nombre de la aerolínea no puede superar los 50 caracteres");
