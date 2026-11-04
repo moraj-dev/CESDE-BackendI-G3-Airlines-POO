@@ -8,13 +8,18 @@ import com.airlinespoo.core.exception.ValidationException;
 import com.airlinespoo.core.util.IdGenerator;
 import com.airlinespoo.core.util.Validator;
 import com.airlinespoo.flights.model.Flight;
+import com.airlinespoo.flights.model.FlightReportRow;
 import com.airlinespoo.flights.model.FlightSchedule;
 import com.airlinespoo.flights.repository.FlightRepository;
 import com.airlinespoo.locations.model.Airport;
 import com.airlinespoo.locations.service.LocationService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -26,6 +31,9 @@ import java.util.UUID;
  * privado {@code findAirline}.</p>
  */
 public class FlightService {
+
+    private static final int MIN_REPORT_YEAR = 2000;
+    private static final int MAX_REPORT_YEAR = 2100;
 
     private final FlightRepository flightRepository;
     private final LocationService locationService;
@@ -103,6 +111,42 @@ public class FlightService {
             throw new ValidationException("La fecha inicial no puede ser posterior a la final.");
         }
         return flightRepository.findByDepartureDateBetween(from, to).stream().sorted().toList();
+    }
+
+    /** Lista los vuelos de una ruta (aeropuerto de salida y de llegada), ordenados por salida. */
+    public List<Flight> listFlightsByRoute(UUID departureId, UUID arrivalId) {
+        Airport departure = locationService.getAirport(departureId);
+        Airport arrival = locationService.getAirport(arrivalId);
+        return flightRepository.findByRoute(departure, arrival).stream().sorted().toList();
+    }
+
+    /**
+     * Reporte mensual (antes uspVuelosPorAerolinea): los vuelos cuya salida cae en el mes,
+     * agrupados por aerolínea. Las aerolíneas salen en orden alfabético y los vuelos de cada
+     * una por fecha y hora de salida. Si no hay vuelos, devuelve un mapa vacío.
+     *
+     * @param year  año del reporte
+     * @param month mes del reporte (1 a 12)
+     * @return mapa aerolínea → filas del reporte, en el orden descrito
+     * @throws ValidationException si el año o el mes están fuera de rango
+     */
+    public Map<Airlines, List<FlightReportRow>> listFlightsByAirlineInMonth(int year, int month) {
+        Validator.requireInRange(year, MIN_REPORT_YEAR, MAX_REPORT_YEAR, "año");
+        Validator.requireInRange(month, 1, 12, "mes");
+        LocalDate first = LocalDate.of(year, month, 1);
+        LocalDate last = first.withDayOfMonth(first.lengthOfMonth());
+
+        List<Flight> flights = new ArrayList<>(flightRepository.findByDepartureDateBetween(first, last));
+        flights.sort(Comparator
+                .comparing((Flight flight) -> flight.getAirline().getName().toLowerCase())
+                .thenComparing(Comparator.naturalOrder()));
+
+        Map<Airlines, List<FlightReportRow>> report = new LinkedHashMap<>();
+        for (Flight flight : flights) {
+            report.computeIfAbsent(flight.getAirline(), airline -> new ArrayList<>())
+                    .add(FlightReportRow.from(flight));
+        }
+        return report;
     }
 
     public long countFlightsByAirline(int airlineId) {

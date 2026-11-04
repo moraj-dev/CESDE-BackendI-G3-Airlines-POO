@@ -50,6 +50,14 @@ public class FlightRepository extends InMemoryRepository<Flight, Integer> {
             .toList();
     }
 
+    /** SELECT ... WHERE Departure = ? AND Arrival = ? */
+    public List<Flight> findByRoute(Airport departure, Airport arrival) {
+        return values().stream()
+            .filter(flight -> flight.getDeparture().equals(departure)
+                    && flight.getArrival().equals(arrival))
+            .toList();
+    }
+
     /** SELECT COUNT(*) ... WHERE AirlineId = ? */
     public long countByAirline(Airlines airline) {
         return findByAirline(airline).size();
