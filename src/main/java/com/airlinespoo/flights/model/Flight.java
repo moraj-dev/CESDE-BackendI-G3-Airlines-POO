@@ -89,14 +89,18 @@ public class Flight implements Identifiable<Integer>, Comparable<Flight> {
         this.airline = Validator.requireNotNull(airline, "aerolínea");
     }
 
-    /** Cambia la ruta validando que los aeropuertos sean distintos. */
+    /**
+     * Cambia la ruta validando que los aeropuertos sean distintos.
+     */
     public void changeRoute(Airport departure, Airport arrival) {
         validateRoute(departure, arrival);
         this.departure = departure;
         this.arrival = arrival;
     }
 
-    /** Reprograma el vuelo; el nuevo horario ya viene validado. */
+    /**
+     * Reprograma el vuelo; el nuevo horario ya viene validado.
+     */
     public void reschedule(FlightSchedule schedule) {
         this.schedule = Validator.requireNotNull(schedule, "horario");
     }

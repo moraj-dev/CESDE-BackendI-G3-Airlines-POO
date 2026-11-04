@@ -13,7 +13,7 @@ import java.util.Objects;
  * Horario de un vuelo: fecha y hora de salida y de llegada.
  * Es inmutable: para reprogramar se crea un horario nuevo.
  */
-    public final class FlightSchedule {
+public final class FlightSchedule {
 
     private final LocalDate departureDate;
     private final LocalTime departureTime;
@@ -58,17 +58,23 @@ import java.util.Objects;
         return arrivalTime;
     }
 
-    /** @return salida con fecha y hora juntas */
+    /**
+     * @return salida con fecha y hora juntas
+     */
     public LocalDateTime getDeparture() {
         return LocalDateTime.of(departureDate, departureTime);
     }
 
-    /** @return llegada con fecha y hora juntas */
+    /**
+     * @return llegada con fecha y hora juntas
+     */
     public LocalDateTime getArrival() {
         return LocalDateTime.of(arrivalDate, arrivalTime);
     }
 
-    /** @return duración total del vuelo */
+    /**
+     * @return duración total del vuelo
+     */
     public Duration getDuration() {
         return Duration.between(getDeparture(), getArrival());
     }
@@ -82,7 +88,9 @@ import java.util.Objects;
         return !getDeparture().isAfter(now);
     }
 
-    /** @return duración en formato "1 h 40 min" */
+    /**
+     * @return duración en formato "1 h 40 min"
+     */
     public String formatDuration() {
         Duration duration = getDuration();
         return "%d h %d min".formatted(duration.toHours(), duration.toMinutesPart());
