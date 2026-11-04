@@ -13,7 +13,7 @@ import java.util.Objects;
  * Horario de un vuelo: fecha y hora de salida y de llegada.
  * Es inmutable: para reprogramar se crea un horario nuevo.
  */
-public final class FlightSchedule {
+    public final class FlightSchedule {
 
     private final LocalDate departureDate;
     private final LocalTime departureTime;
