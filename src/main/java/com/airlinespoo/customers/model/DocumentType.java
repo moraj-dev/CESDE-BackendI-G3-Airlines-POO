@@ -43,13 +43,21 @@ public class DocumentType implements Identifiable<String> {
             MAX_DESCRIPTION_LENGTH);
     }
 
-    // Getter del id (no tiene setter porque el id no cambia)
+    /**
+     * Devuelve el id. No tiene setter porque el id no cambia.
+     *
+     * @return el identificador
+     */
     @Override
     public String getId() {
         return id;
     }
 
-    // Getter de la descripción
+    /**
+     * Devuelve la descripción del tipo de documento.
+     *
+     * @return la descripción
+     */
     public String getDescription() {
         return description;
     }
@@ -64,7 +72,12 @@ public class DocumentType implements Identifiable<String> {
             MAX_DESCRIPTION_LENGTH);
     }
 
-    // Dos tipos de documento son iguales si tienen el mismo código
+    /**
+     * Dos tipos de documento son iguales si tienen el mismo código.
+     *
+     * @param obj objeto a comparar
+     * @return true si es un tipo de documento con el mismo código
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -77,13 +90,21 @@ public class DocumentType implements Identifiable<String> {
         return this.id.equals(otro.id);   // con textos se usa equals, no ==
     }
 
-    // Se calcula con el id, igual que equals
+    /**
+     * Se calcula con el id, igual que equals.
+     *
+     * @return código hash del tipo de documento
+     */
     @Override
     public int hashCode() {
         return id.hashCode();
     }
 
-    // Texto que se muestra al imprimir el tipo de documento
+    /**
+     * Texto que se muestra al imprimir el tipo de documento.
+     *
+     * @return código y descripción, por ejemplo "CC - Cédula"
+     */
     @Override
     public String toString() {
         return id + " - " + description;

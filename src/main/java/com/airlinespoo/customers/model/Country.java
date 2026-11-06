@@ -30,13 +30,21 @@ public class Country implements Identifiable<Integer> {
         this.name = Validator.requireText(name, "nombre del país", MAX_NAME_LENGTH);
     }
 
-    // Getter del id (no tiene setter porque el id no cambia)
+    /**
+     * Devuelve el id. No tiene setter porque el id no cambia.
+     *
+     * @return el identificador
+     */
     @Override
     public Integer getId() {
         return id;
     }
 
-    // Getter del nombre
+    /**
+     * Devuelve el nombre del país.
+     *
+     * @return el nombre
+     */
     public String getName() {
         return name;
     }
@@ -50,7 +58,12 @@ public class Country implements Identifiable<Integer> {
         this.name = Validator.requireText(name, "nombre del país", MAX_NAME_LENGTH);
     }
 
-    // Dos países son iguales si tienen el mismo id
+    /**
+     * Dos países son iguales si tienen el mismo id.
+     *
+     * @param obj objeto a comparar
+     * @return true si es un país con el mismo id
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -63,13 +76,21 @@ public class Country implements Identifiable<Integer> {
         return this.id == otro.id;
     }
 
-    // Debe ir de la mano con equals: se calcula con el id
+    /**
+     * Debe ir de la mano con equals: se calcula con el id.
+     *
+     * @return código hash del país
+     */
     @Override
     public int hashCode() {
         return Integer.hashCode(id);
     }
 
-    // Texto que se muestra al imprimir el país
+    /**
+     * Texto que se muestra al imprimir el país.
+     *
+     * @return id y nombre, por ejemplo "57 - Colombia"
+     */
     @Override
     public String toString() {
         return id + " - " + name;

@@ -55,35 +55,75 @@ public class Customer implements Identifiable<String> {
 
     // ---------- Getters ----------
 
+    /**
+     * Devuelve el documento del cliente. No tiene setter porque no cambia.
+     *
+     * @return el número de documento
+     */
     @Override
     public String getId() {
         return id;
     }
 
+    /**
+     * Devuelve el nombre del cliente.
+     *
+     * @return el nombre del cliente
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Devuelve el apellido del cliente.
+     *
+     * @return el apellido del cliente
+     */
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * Devuelve el tipo de documento del cliente.
+     *
+     * @return el tipo de documento del cliente
+     */
     public DocumentType getDocumentType() {
         return documentType;
     }
 
+    /**
+     * Devuelve el teléfono del cliente.
+     *
+     * @return el teléfono del cliente
+     */
     public String getTelephoneNumber() {
         return telephoneNumber;
     }
 
+    /**
+     * Devuelve el correo del cliente, o null si no tiene.
+     *
+     * @return el correo del cliente, o null si no tiene
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Devuelve el país del cliente.
+     *
+     * @return el país del cliente
+     */
     public Country getCountry() {
         return country;
     }
 
+    /**
+     * Devuelve la dirección del cliente, o null si no tiene.
+     *
+     * @return la dirección del cliente, o null si no tiene
+     */
     public String getAddress() {
         return address;
     }
@@ -99,18 +139,38 @@ public class Customer implements Identifiable<String> {
 
     // ---------- Setters (todos validan) ----------
 
+    /**
+     * Cambia el nombre. Es obligatorio y de máximo 30 caracteres.
+     *
+     * @param firstName nuevo nombre
+     */
     public void setFirstName(String firstName) {
         this.firstName = Validator.requireText(firstName, "nombre del cliente", MAX_NAME_LENGTH);
     }
 
+    /**
+     * Cambia el apellido. Es obligatorio y de máximo 30 caracteres.
+     *
+     * @param lastName nuevo apellido
+     */
     public void setLastName(String lastName) {
         this.lastName = Validator.requireText(lastName, "apellido del cliente", MAX_NAME_LENGTH);
     }
 
+    /**
+     * Cambia el tipo de documento. Es obligatorio.
+     *
+     * @param documentType nuevo tipo de documento
+     */
     public void setDocumentType(DocumentType documentType) {
         this.documentType = Validator.requireNotNull(documentType, "tipo de documento");
     }
 
+    /**
+     * Cambia el país. Es obligatorio.
+     *
+     * @param country nuevo país
+     */
     public void setCountry(Country country) {
         this.country = Validator.requireNotNull(country, "país del cliente");
     }
@@ -169,7 +229,12 @@ public class Customer implements Identifiable<String> {
 
     // ---------- equals, hashCode y toString ----------
 
-    // Dos clientes son iguales si tienen el mismo documento
+    /**
+     * Dos clientes son iguales si tienen el mismo documento.
+     *
+     * @param obj objeto a comparar
+     * @return true si es un cliente con el mismo documento
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -182,12 +247,22 @@ public class Customer implements Identifiable<String> {
         return this.id.equals(otro.id);
     }
 
+    /**
+     * Se calcula con el documento, igual que equals.
+     *
+     * @return código hash del cliente
+     */
     @Override
     public int hashCode() {
         return id.hashCode();
     }
 
-    // No muestra teléfono, correo ni dirección (datos sensibles)
+    /**
+     * Texto que se muestra al imprimir el cliente.
+     * No muestra teléfono, correo ni dirección (datos sensibles).
+     *
+     * @return tipo de documento, documento, nombre completo y país
+     */
     @Override
     public String toString() {
         return documentType.getId() + " " + id + " - " + getFullName() + " (" + country.getName() + ")";
