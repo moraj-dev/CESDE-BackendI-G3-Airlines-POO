@@ -14,13 +14,21 @@ public final class CustomerSampleData {
 
     /**
      * Registra los datos de ejemplo usando el servicio, para que pasen por todas las validaciones.
+     * Solo carga lo que esté vacío: con base de datos los datos no se borran al cerrar el
+     * programa, y cargarlos otra vez daría error de "ya existe".
      *
      * @param service servicio de clientes donde se cargan los datos
      */
     public static void load(CustomerService service) {
-        loadCountries(service);
-        loadDocumentTypes(service);
-        loadCustomers(service);
+        if (service.listCountries().isEmpty()) {
+            loadCountries(service);
+        }
+        if (service.listDocumentTypes().isEmpty()) {
+            loadDocumentTypes(service);
+        }
+        if (service.countCustomers() == 0) {
+            loadCustomers(service);
+        }
     }
 
     // 5 países (el id es el indicativo telefónico de cada país)
