@@ -1,16 +1,14 @@
 package com.airlinespoo.customers.repository;
 
-import com.airlinespoo.core.repository.InMemoryRepository;
+import com.airlinespoo.core.repository.Repository;
 import com.airlinespoo.customers.model.Country;
 
 /**
- * Guarda los países en memoria. Hereda todo el CRUD del kit base.
+ * Contrato del repositorio de países.
+ * El servicio depende de esta interfaz, no de una clase concreta. Así se puede usar
+ * la versión en memoria ({@link InMemoryCountryRepository}) o la de base de datos
+ * ({@link JdbcCountryRepository}) sin cambiar el servicio.
  */
-public class CountryRepository extends InMemoryRepository<Country, Integer> {
-
-    // Nombre que se usa en los mensajes de error
-    @Override
-    protected String entityName() {
-        return "país";
-    }
+public interface CountryRepository extends Repository<Country, Integer> {
+    // Solo usa las operaciones comunes del kit base (create, findById, findAll, ...)
 }

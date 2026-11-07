@@ -1,16 +1,14 @@
 package com.airlinespoo.customers.repository;
 
-import com.airlinespoo.core.repository.InMemoryRepository;
+import com.airlinespoo.core.repository.Repository;
 import com.airlinespoo.customers.model.DocumentType;
 
 /**
- * Guarda los tipos de documento en memoria. Hereda todo el CRUD del kit base.
+ * Contrato del repositorio de tipos de documento.
+ * El servicio depende de esta interfaz, no de una clase concreta. Así se puede usar
+ * la versión en memoria ({@link InMemoryDocumentTypeRepository}) o la de base de datos
+ * ({@link JdbcDocumentTypeRepository}) sin cambiar el servicio.
  */
-public class DocumentTypeRepository extends InMemoryRepository<DocumentType, String> {
-
-    // Nombre que se usa en los mensajes de error
-    @Override
-    protected String entityName() {
-        return "tipo de documento";
-    }
+public interface DocumentTypeRepository extends Repository<DocumentType, String> {
+    // Solo usa las operaciones comunes del kit base (create, findById, findAll, ...)
 }
