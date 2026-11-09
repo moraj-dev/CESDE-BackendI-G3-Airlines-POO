@@ -32,10 +32,10 @@ public class AirlineService {
         if (repository.existsByName(airline.getName())) {
             throw new DuplicateException("Ya existe una aerolínea con el nombre: " + airline.getName());
         }
-        return repository.save(airline);
+        return repository.create(airline);
     }
 
-    // Actualizar aerolínea (recibe 1 solo argumento según el repositorio base)
+    // Actualizar aerolínea
     public Airlines update(int id, Airlines updatedAirline) {
         findById(id); // Verifica que exista antes de actualizar
         return repository.update(updatedAirline);
@@ -44,7 +44,7 @@ public class AirlineService {
     // Eliminar aerolínea
     public void delete(int id) {
         Airlines airline = findById(id);
-        repository.delete(airline);
+        repository.deleteById();
     }
 
     // Búsqueda por nombre parcial
