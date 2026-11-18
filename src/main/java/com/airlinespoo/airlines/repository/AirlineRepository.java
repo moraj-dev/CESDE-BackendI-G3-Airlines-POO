@@ -2,6 +2,8 @@ package com.airlinespoo.airlines.repository;
 
 import com.airlinespoo.airlines.model.Airlines;
 import com.airlinespoo.core.repository.InMemoryRepository;
+// Asegúrate de importar InMemoryRepository si está en otro paquete, por ejemplo:
+// import com.airlinespoo.core.repository.InMemoryRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,6 +1,7 @@
 package com.airlinespoo.app;
 
 import com.airlinespoo.airlines.repository.AirlineRepository;
+import com.airlinespoo.airlines.repository.SqlAirlineRepository;
 import com.airlinespoo.airlines.service.AirlineService;
 import com.airlinespoo.airlines.ui.ConsoleUI;
 
@@ -13,10 +14,9 @@ public final class Main {
     public static void main(String[] args) {
         System.out.println("=== Airlines-poo ===");
 
-        AirlineRepository repository = new AirlineRepository();
+        SqlAirlineRepository repository = new SqlAirlineRepository();
         AirlineService service = new AirlineService(repository);
         ConsoleUI ui = new ConsoleUI(service);
-
         ui.start();
     }
 }
