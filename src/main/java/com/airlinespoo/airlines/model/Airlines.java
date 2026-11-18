@@ -8,7 +8,7 @@ import com.airlinespoo.core.model.Identifiable;
 import com.airlinespoo.core.exception.ValidationException;
 
 public class Airlines implements Identifiable<Integer> {
-    private int id;
+    private final int id;
     private String name;
 
     // Constructor que valida y deja el objeto en un estado válido
