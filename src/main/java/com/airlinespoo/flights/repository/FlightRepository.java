@@ -1,8 +1,7 @@
 package com.airlinespoo.flights.repository;
 
 import com.airlinespoo.airlines.model.Airlines;
-import com.airlinespoo.core.repository.InMemoryRepository;
-import com.airlinespoo.core.util.Validator;
+import com.airlinespoo.core.repository.Repository;
 import com.airlinespoo.flights.model.Flight;
 import com.airlinespoo.locations.model.Airport;
 
@@ -11,66 +10,85 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repositorio en memoria de vuelos. Solo guarda y busca; las reglas viven en el servicio.
+ * Contrato del repositorio de vuelos: las operaciones comunes del kit base
+ * más las búsquedas propias de este módulo sobre la tabla tblFlights.
+ *
+ * <p>Lo cumple {@link InMemoryFlightRepository} (memoria). Solo guarda y busca;
+ * las reglas de negocio viven en el servicio.</p>
  */
-public class FlightRepository extends InMemoryRepository<Flight, Integer> {
+public interface FlightRepository extends Repository<Flight, Integer> {
 
-    @Override
-    protected String entityName() {
-        return "vuelo";
-    }
+    /**
+     * Busca un vuelo por su código, sin distinguir mayúsculas.
+     * Equivale a: SELECT ... WHERE FlightName = ?
+     *
+     * @param flightName código del vuelo
+     * @return el vuelo, o vacío si no existe
+     */
+    Optional<Flight> findByFlightName(String flightName);
 
-    /** SELECT ... WHERE FlightName = ? (sin distinguir mayúsculas). */
-    public Optional<Flight> findByFlightName(String flightName) {
-        String wanted = Validator.normalize(flightName);
-        return values().stream()
-            .filter(flight -> flight.getFlightName().equalsIgnoreCase(wanted))
-            .findFirst();
-    }
+    /**
+     * Indica si ya existe un vuelo con ese código.
+     * Equivale a: SELECT 1 ... WHERE FlightName = ?
+     *
+     * @param flightName código del vuelo
+     * @return true si existe
+     */
+    boolean existsByFlightName(String flightName);
 
-    /** SELECT 1 ... WHERE FlightName = ? */
-    public boolean existsByFlightName(String flightName) {
-        return findByFlightName(flightName).isPresent();
-    }
+    /**
+     * Lista los vuelos de una aerolínea.
+     * Equivale a: SELECT ... WHERE AirlineId = ?
+     *
+     * @param airline aerolínea buscada
+     * @return vuelos de esa aerolínea
+     */
+    List<Flight> findByAirline(Airlines airline);
 
-    /** SELECT ... WHERE AirlineId = ? */
-    public List<Flight> findByAirline(Airlines airline) {
-        return values().stream()
-            .filter(flight -> flight.getAirline().equals(airline))
-            .toList();
-    }
+    /**
+     * Lista los vuelos que salen entre dos fechas, con los extremos incluidos.
+     * Equivale a: SELECT ... WHERE DateDeparture BETWEEN ? AND ?
+     *
+     * @param from fecha inicial
+     * @param to   fecha final
+     * @return vuelos que salen en ese rango
+     */
+    List<Flight> findByDepartureDateBetween(LocalDate from, LocalDate to);
 
-    /** SELECT ... WHERE DateDeparture BETWEEN ? AND ? (extremos incluidos). */
-    public List<Flight> findByDepartureDateBetween(LocalDate from, LocalDate to) {
-        return values().stream()
-            .filter(flight -> {
-                LocalDate date = flight.getSchedule().getDepartureDate();
-                return !date.isBefore(from) && !date.isAfter(to);
-            })
-            .toList();
-    }
+    /**
+     * Lista los vuelos de una ruta.
+     * Equivale a: SELECT ... WHERE Departure = ? AND Arrival = ?
+     *
+     * @param departure aeropuerto de salida
+     * @param arrival   aeropuerto de llegada
+     * @return vuelos de esa ruta
+     */
+    List<Flight> findByRoute(Airport departure, Airport arrival);
 
-    /** SELECT ... WHERE Departure = ? AND Arrival = ? */
-    public List<Flight> findByRoute(Airport departure, Airport arrival) {
-        return values().stream()
-            .filter(flight -> flight.getDeparture().equals(departure)
-                    && flight.getArrival().equals(arrival))
-            .toList();
-    }
+    /**
+     * Cuenta los vuelos de una aerolínea.
+     * Equivale a: SELECT COUNT(*) ... WHERE AirlineId = ?
+     *
+     * @param airline aerolínea buscada
+     * @return cantidad de vuelos
+     */
+    long countByAirline(Airlines airline);
 
-    /** SELECT COUNT(*) ... WHERE AirlineId = ? */
-    public long countByAirline(Airlines airline) {
-        return findByAirline(airline).size();
-    }
+    /**
+     * Indica si una aerolínea tiene al menos un vuelo.
+     * Equivale a: SELECT 1 ... WHERE AirlineId = ?
+     *
+     * @param airline aerolínea a revisar
+     * @return true si tiene vuelos
+     */
+    boolean existsByAirline(Airlines airline);
 
-    /** SELECT 1 ... WHERE AirlineId = ? */
-    public boolean existsByAirline(Airlines airline) {
-        return countByAirline(airline) > 0;
-    }
-
-    /** SELECT 1 ... WHERE Departure = ? OR Arrival = ? */
-    public boolean existsByAirport(Airport airport) {
-        return values().stream().anyMatch(flight ->
-            flight.getDeparture().equals(airport) || flight.getArrival().equals(airport));
-    }
+    /**
+     * Indica si un aeropuerto se usa como salida o llegada de algún vuelo.
+     * Equivale a: SELECT 1 ... WHERE Departure = ? OR Arrival = ?
+     *
+     * @param airport aeropuerto a revisar
+     * @return true si algún vuelo lo usa
+     */
+    boolean existsByAirport(Airport airport);
 }
