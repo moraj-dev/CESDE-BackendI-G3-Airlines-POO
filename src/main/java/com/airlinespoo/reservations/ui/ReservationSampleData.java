@@ -1,3 +1,4 @@
+
 package com.airlinespoo.reservations.ui;
 
 import com.airlinespoo.customers.model.Customer;
@@ -11,13 +12,30 @@ import com.airlinespoo.reservations.service.ReservationService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/** Carga 4 reservas de ejemplo. Requiere clientes y vuelos ya cargados. */
+/**
+ * Proporciona datos de prueba para el módulo de reservas.
+ *
+ * Carga cuatro reservas de ejemplo utilizando clientes y vuelos
+ * previamente registrados en sus respectivos módulos.
+ */
 public class ReservationSampleData {
 
+    /** Servicio encargado de crear las reservas de prueba. */
     private final ReservationService service;
+
+    /** Servicio utilizado para consultar los clientes registrados. */
     private final CustomerService customerService;
+
+    /** Servicio utilizado para consultar los vuelos disponibles. */
     private final FlightService flightService;
 
+    /**
+     * Construye el componente encargado de cargar las reservas de ejemplo.
+     *
+     * @param service servicio de reservas.
+     * @param customerService servicio de clientes.
+     * @param flightService servicio de vuelos.
+     */
     public ReservationSampleData(ReservationService service, CustomerService customerService,
                                  FlightService flightService) {
         this.service = service;
@@ -25,6 +43,13 @@ public class ReservationSampleData {
         this.flightService = flightService;
     }
 
+    /**
+     * Consulta los clientes y vuelos registrados y crea cuatro reservas
+     * de ejemplo con diferentes cantidades de pasajeros.
+     *
+     * Solo utiliza vuelos que todavía no han salido.
+     * Si no existen clientes o vuelos disponibles, finaliza sin crear reservas.
+     */
     public void load() {
         List<Customer> customers = customerService.listCustomers();
         List<Flight> flights = flightService.listFlights().stream()
@@ -47,6 +72,13 @@ public class ReservationSampleData {
             new PassengerRequest("Ana Gómez", "AG1001", new Seat("C", 10))));
     }
 
+    /**
+     * Crea una reserva de ejemplo para el cliente y vuelo recibidos.
+     *
+     * @param customer cliente al que se asociará la reserva.
+     * @param flight vuelo al que pertenecerá la reserva.
+     * @param passengers lista de pasajeros que tendrá la reserva.
+     */
     private void createSample(Customer customer, Flight flight, List<PassengerRequest> passengers) {
         service.createReservation(customer.getId(), flight.getId(), passengers);
     }
