@@ -1,6 +1,8 @@
 package com.airlinespoo.airlines.repository;
 
 import com.airlinespoo.airlines.model.Airline;
+import com.airlinespoo.core.exception.NotFoundException;
+import com.airlinespoo.core.util.Validator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -59,6 +61,28 @@ public class SqlAirlineRepository extends AirlineRepository {
 
         return airlinesList;
     }
+
+    @Override
+    public boolean deleteById(Integer id) {
+        if (id == null) {
+            return false;
+        }
+
+        String sql = "DELETE FROM airlines WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, id);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar la aerolínea en SQL: " + e.getMessage());
+            return false;
+        }
+    }
+
     @Override
     public Optional<Airline> findById(Integer id) {
         if (id == null) {
@@ -86,4 +110,30 @@ public class SqlAirlineRepository extends AirlineRepository {
 
         return Optional.empty();
     }
+
+    @Override
+    public Airline update(Airline airline) {
+        Validator.requireNotNull(airline, this.entityName());
+        Integer id = Validator.requireNotNull(airline.getId(), "id de " + this.entityName());
+
+        String sql = "UPDATE airlines SET name = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, airline.getName());
+            pstmt.setInt(2, id);
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new NotFoundException(this.entityName(), id);
+            }
+
+            return airline;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al actualizar la aerolínea en SQL: " + e.getMessage(), e);
+        }
+    }
+
 }

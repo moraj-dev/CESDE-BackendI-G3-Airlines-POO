@@ -37,8 +37,19 @@ public class AirlineService {
 
     // Actualizar aerolínea
     public Airline update(int id, Airline updatedAirline) {
-        findById(id);
+        Airline existing = findById(id);
         updatedAirline.setId(id);
+
+        String normalizedName = updatedAirline.getName() == null ? "" : updatedAirline.getName().trim();
+
+        boolean duplicateInOtherAirline = repository.findAll().stream()
+            .filter(a -> a.getId() != null && !a.getId().equals(id))
+            .anyMatch(a -> a.getName() != null && a.getName().trim().equalsIgnoreCase(normalizedName));
+
+        if (duplicateInOtherAirline) {
+            throw new DuplicateException("Ya existe una aerolínea con el nombre: " + updatedAirline.getName());
+        }
+
         return repository.update(updatedAirline);
     }
 
