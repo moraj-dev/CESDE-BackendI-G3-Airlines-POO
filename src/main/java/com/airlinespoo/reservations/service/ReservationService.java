@@ -96,7 +96,6 @@ public class ReservationService {
     public List<Reservation> listReservationsByCustomer(String customerDocument) {
         customerService.getCustomer(customerDocument);
         return repository.findByCustomer(customerDocument).stream()
-            // CORREGIDO: la fecha de salida vive en FlightSchedule
             .sorted(Comparator.comparing(r -> r.getFlight().getSchedule().getDeparture()))
             .toList();
     }
@@ -198,7 +197,6 @@ public class ReservationService {
 
     private Flight getFutureFlight(int flightId) {
         Flight flight = flightService.getFlight(flightId);
-        // CORREGIDO: hasDeparted vive en FlightSchedule
         if (flight.getSchedule().hasDeparted(LocalDateTime.now())) {
             throw new BusinessRuleException("El vuelo " + flight.getFlightName() + " ya salió.");
         }

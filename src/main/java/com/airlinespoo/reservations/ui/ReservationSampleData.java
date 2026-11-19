@@ -8,6 +8,7 @@ import com.airlinespoo.reservations.model.Seat;
 import com.airlinespoo.reservations.service.PassengerRequest;
 import com.airlinespoo.reservations.service.ReservationService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /** Carga 4 reservas de ejemplo. Requiere clientes y vuelos ya cargados. */
@@ -26,7 +27,9 @@ public class ReservationSampleData {
 
     public void load() {
         List<Customer> customers = customerService.listCustomers();
-        List<Flight> flights = flightService.listFlights();
+        List<Flight> flights = flightService.listFlights().stream()
+            .filter(f -> !f.getSchedule().hasDeparted(LocalDateTime.now()))
+            .toList();
         if (customers.isEmpty() || flights.isEmpty()) {
             return;
         }
