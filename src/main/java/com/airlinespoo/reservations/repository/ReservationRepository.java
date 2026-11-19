@@ -1,41 +1,51 @@
 package com.airlinespoo.reservations.repository;
 
-import com.airlinespoo.core.repository.InMemoryRepository;
+import com.airlinespoo.core.repository.Repository;
 import com.airlinespoo.reservations.model.Reservation;
 
 import java.util.List;
 
-/** Repositorio en memoria de reservas (los detalles viajan dentro de la reserva). */
-public class ReservationRepository extends InMemoryRepository<Reservation, Integer> {
+/**
+ * Contrato del repositorio de reservas: las operaciones comunes del kit base
+ * más las búsquedas propias de este módulo.
+ * Lo cumplen {@link InMemoryReservationRepository} (memoria) y
+ * {@link JdbcReservationRepository} (SQL Server).
+ */
+public interface ReservationRepository extends Repository<Reservation, Integer> {
 
-    @Override
-    protected String entityName() {
-        return "reserva";
-    }
+    /**
+     * Lista las reservas de un cliente.
+     * Equivale a: SELECT ... WHERE CustomerId = ?
+     *
+     * @param customerId documento del cliente
+     * @return reservas de ese cliente
+     */
+    List<Reservation> findByCustomer(String customerId);
 
-    /** SELECT ... WHERE CustomerId = ? */
-    public List<Reservation> findByCustomer(String customerId) {
-        return values().stream()
-            .filter(r -> r.getCustomer().getId().equals(customerId))
-            .toList();
-    }
+    /**
+     * Lista las reservas de un vuelo.
+     * Equivale a: SELECT ... WHERE FlightId = ?
+     *
+     * @param flightId id del vuelo
+     * @return reservas de ese vuelo
+     */
+    List<Reservation> findByFlight(int flightId);
 
-    /** SELECT ... WHERE FlightId = ? */
-    public List<Reservation> findByFlight(int flightId) {
-        return values().stream()
-            .filter(r -> r.getFlight().getId() == flightId)
-            .toList();
-    }
+    /**
+     * Indica si el cliente tiene al menos una reserva.
+     * Equivale a: SELECT 1 ... WHERE CustomerId = ?
+     *
+     * @param customerId documento del cliente
+     * @return true si tiene reservas
+     */
+    boolean existsByCustomer(String customerId);
 
-    /** SELECT 1 ... WHERE CustomerId = ? */
-    public boolean existsByCustomer(String customerId) {
-        return values().stream()
-            .anyMatch(r -> r.getCustomer().getId().equals(customerId));
-    }
-
-    /** SELECT 1 ... WHERE FlightId = ? */
-    public boolean existsByFlight(int flightId) {
-        return values().stream()
-            .anyMatch(r -> r.getFlight().getId() == flightId);
-    }
+    /**
+     * Indica si el vuelo tiene al menos una reserva.
+     * Equivale a: SELECT 1 ... WHERE FlightId = ?
+     *
+     * @param flightId id del vuelo
+     * @return true si tiene reservas
+     */
+    boolean existsByFlight(int flightId);
 }
