@@ -2,6 +2,7 @@ package com.airlinespoo.flights.repository;
 
 import com.airlinespoo.airlines.model.Airlines;
 import com.airlinespoo.core.repository.InMemoryRepository;
+import com.airlinespoo.core.util.IdGenerator;
 import com.airlinespoo.core.util.Validator;
 import com.airlinespoo.flights.model.Flight;
 import com.airlinespoo.locations.model.Airport;
@@ -13,13 +14,39 @@ import java.util.Optional;
 /**
  * Implementación EN MEMORIA del repositorio de vuelos. Guarda los vuelos en un mapa.
  * Hereda el CRUD del kit base y agrega las búsquedas propias de {@link FlightRepository}.
+ *
+ * <p>Asigna el id de cada vuelo nuevo con un {@link IdGenerator}, igual que la columna
+ * IDENTITY de tblFlights lo hace en la base de datos.</p>
  */
 public class InMemoryFlightRepository extends InMemoryRepository<Flight, Integer>
         implements FlightRepository {
 
+    private final IdGenerator ids;
+
+    /**
+     * @param ids generador de ids de vuelos (en el proyecto: arranque 1, paso 1)
+     */
+    public InMemoryFlightRepository(IdGenerator ids) {
+        this.ids = Validator.requireNotNull(ids, "generador de ids de vuelos");
+    }
+
     @Override
     protected String entityName() {
         return "vuelo";
+    }
+
+    /**
+     * Guarda un vuelo nuevo (INSERT) y le asigna el siguiente id disponible.
+     *
+     * @param flight vuelo sin guardar, con id {@link Flight#UNSAVED_ID}
+     * @return un vuelo nuevo con los mismos datos y el id real; quien llama debe usar este
+     */
+    @Override
+    public Flight create(Flight flight) {
+        Validator.requireNotNull(flight, entityName());
+        Flight saved = new Flight(ids.next(), flight.getFlightName(), flight.getDeparture(),
+            flight.getArrival(), flight.getAirline(), flight.getSchedule());
+        return super.create(saved);
     }
 
     @Override

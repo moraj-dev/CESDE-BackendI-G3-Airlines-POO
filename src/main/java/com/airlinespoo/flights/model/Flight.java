@@ -10,8 +10,16 @@ import java.util.Objects;
 
 /**
  * Vuelo entre dos aeropuertos operado por una aerolínea.
+ *
+ * <p>Un vuelo nuevo se crea sin id ({@link #UNSAVED_ID}); el id real lo asigna el
+ * repositorio al guardarlo. Ojo: {@link #equals} compara por id, así que dos vuelos
+ * sin guardar (id 0) se ven "iguales". No se deben meter en un {@code Set} ni usar
+ * como clave de un {@code Map} antes de guardarlos.</p>
  */
 public class Flight implements Identifiable<Integer>, Comparable<Flight> {
+
+    /** Id que tiene un vuelo que todavía no se ha guardado en el repositorio. */
+    public static final int UNSAVED_ID = 0;
 
     private static final int MAX_FLIGHT_NAME_LENGTH = 8;
     private static final String FLIGHT_NAME_PATTERN = "[A-Z0-9]+";
@@ -24,11 +32,34 @@ public class Flight implements Identifiable<Integer>, Comparable<Flight> {
     private FlightSchedule schedule;
 
     /**
-     * @throws ValidationException si algún dato no cumple las reglas del vuelo
+     * Crea un vuelo que ya tiene id (por ejemplo, uno leído del repositorio).
+     *
+     * @throws ValidationException si el id no es positivo o algún dato no cumple las reglas
      */
     public Flight(int id, String flightName, Airport departure, Airport arrival,
                   Airlines airline, FlightSchedule schedule) {
-        this.id = (int) Validator.requirePositive(id, "id del vuelo");
+        this(flightName, departure, arrival, airline, schedule,
+            (int) Validator.requirePositive(id, "id del vuelo"));
+    }
+
+    /**
+     * Crea un vuelo nuevo, todavía sin guardar: su id queda en {@link #UNSAVED_ID}
+     * hasta que el repositorio le asigne uno.
+     *
+     * @throws ValidationException si algún dato no cumple las reglas del vuelo
+     */
+    public Flight(String flightName, Airport departure, Airport arrival,
+                  Airlines airline, FlightSchedule schedule) {
+        this(flightName, departure, arrival, airline, schedule, UNSAVED_ID);
+    }
+
+    /**
+     * Constructor común: aquí están todas las validaciones, para no repetirlas.
+     * Recibe el id ya revisado por el constructor público que lo llama.
+     */
+    private Flight(String flightName, Airport departure, Airport arrival,
+                   Airlines airline, FlightSchedule schedule, int id) {
+        this.id = id;
         this.flightName = validFlightName(flightName);
         validateRoute(departure, arrival);
         this.departure = departure;

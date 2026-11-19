@@ -5,7 +5,6 @@ import com.airlinespoo.airlines.repository.AirlineRepository;
 import com.airlinespoo.core.exception.DuplicateException;
 import com.airlinespoo.core.exception.NotFoundException;
 import com.airlinespoo.core.exception.ValidationException;
-import com.airlinespoo.core.util.IdGenerator;
 import com.airlinespoo.core.util.Validator;
 import com.airlinespoo.flights.model.Flight;
 import com.airlinespoo.flights.model.FlightReportRow;
@@ -38,26 +37,26 @@ public class FlightService {
     private final FlightRepository flightRepository;
     private final LocationService locationService;
     private final AirlineRepository airlineRepository;
-    private final IdGenerator flightIds;
 
     public FlightService(FlightRepository flightRepository, LocationService locationService,
-                         AirlineRepository airlineRepository, IdGenerator flightIds) {
+                         AirlineRepository airlineRepository) {
         this.flightRepository = flightRepository;
         this.locationService = locationService;
         this.airlineRepository = airlineRepository;
-        this.flightIds = flightIds;
     }
 
-    /** Programa un vuelo nuevo (INSERT). */
+    /**
+     * Programa un vuelo nuevo (INSERT). El id lo asigna el repositorio al guardarlo.
+     *
+     * @return el vuelo guardado, ya con su id real
+     */
     public Flight createFlight(String flightName, UUID departureId, UUID arrivalId,
                                int airlineId, FlightSchedule schedule) {
         requireUniqueName(flightName, null);
-        Flight flight = new Flight(flightIds.peekNext(), flightName,
+        Flight flight = new Flight(flightName,
             locationService.getAirport(departureId), locationService.getAirport(arrivalId),
             findAirline(airlineId), schedule);
-        flightRepository.create(flight);
-        flightIds.next();
-        return flight;
+        return flightRepository.create(flight);
     }
 
     /** Consulta un vuelo por id; lanza "no encontrado" si no existe. */
