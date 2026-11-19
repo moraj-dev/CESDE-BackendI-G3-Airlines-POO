@@ -1,6 +1,6 @@
 package com.airlinespoo.airlines.repository;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SqlAirlineRepository extends AirlineRepository {
 
@@ -17,7 +18,7 @@ public class SqlAirlineRepository extends AirlineRepository {
     }
 
     @Override
-    public Airlines create(Airlines airline) {
+    public Airline create(Airline airline) {
         String sql = "INSERT INTO airlines (id, name) VALUES (?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -37,8 +38,8 @@ public class SqlAirlineRepository extends AirlineRepository {
     }
 
     @Override
-    public List<Airlines> findAll() {
-        List<Airlines> airlinesList = new ArrayList<>();
+    public List<Airline> findAll() {
+        List<Airline> airlinesList = new ArrayList<>();
         String sql = "SELECT id, name FROM airlines";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -48,7 +49,7 @@ public class SqlAirlineRepository extends AirlineRepository {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
-                Airlines airline = new Airlines(id, name);
+                Airline airline = new Airline(id, name);
                 airlinesList.add(airline);
             }
 
@@ -57,5 +58,32 @@ public class SqlAirlineRepository extends AirlineRepository {
         }
 
         return airlinesList;
+    }
+    @Override
+    public Optional<Airline> findById(Integer id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+
+        String sql = "SELECT id, name FROM airlines WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int foundId = rs.getInt("id");
+                    String name = rs.getString("name");
+                    return Optional.of(new Airline(foundId, name));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al buscar la aerolínea por ID en SQL: " + e.getMessage());
+        }
+
+        return Optional.empty();
     }
 }

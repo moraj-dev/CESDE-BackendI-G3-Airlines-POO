@@ -1,6 +1,6 @@
 package com.airlinespoo.airlines.repository;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.core.repository.InMemoryRepository;
 // Asegúrate de importar InMemoryRepository si está en otro paquete, por ejemplo:
 // import com.airlinespoo.core.repository.InMemoryRepository;
@@ -8,7 +8,7 @@ import com.airlinespoo.core.repository.InMemoryRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AirlineRepository extends InMemoryRepository<Airlines, Integer> {
+public class AirlineRepository extends InMemoryRepository<Airline, Integer> {
 
     @Override
     protected String entityName() {
@@ -16,7 +16,7 @@ public class AirlineRepository extends InMemoryRepository<Airlines, Integer> {
     }
 
     // Búsqueda por nombre (coincidencia parcial, sin distinguir mayúsculas)
-    public List<Airlines> findByName(String name) {
+    public List<Airline> findByName(String name) {
         String lowerCaseName = name.toLowerCase();
         return findAll().stream()
             .filter(a -> a.getName().toLowerCase().contains(lowerCaseName))

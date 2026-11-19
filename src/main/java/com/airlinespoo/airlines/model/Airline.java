@@ -7,12 +7,12 @@ package com.airlinespoo.airlines.model;
 import com.airlinespoo.core.model.Identifiable;
 import com.airlinespoo.core.exception.ValidationException;
 
-public class Airlines implements Identifiable<Integer> {
+public class Airline implements Identifiable<Integer> {
     private final int id;
     private String name;
 
     // Constructor que valida y deja el objeto en un estado válido
-    public Airlines(int id, String name) {
+    public Airline(int id, String name) {
         if (id <= 0) {
             throw new ValidationException("El id debe ser positivo");
         }
@@ -42,19 +42,22 @@ public class Airlines implements Identifiable<Integer> {
 
     @Override
     public String toString() {
-        return "Airlines{id=" + id + ", name='" + name + "'}";
+        return "Airline{id=" + id + ", name='" + name + "'}";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Airlines airlines = (Airlines) o;
+        Airline airlines = (Airline) o;
         return id == airlines.id;
     }
 
     @Override
     public int hashCode() {
         return Integer.hashCode(id);
+    }
+
+    public void setId(int id) {
     }
 }

@@ -1,6 +1,6 @@
 package com.airlinespoo.airlines.ui;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.airlines.service.AirlineService;
 import com.airlinespoo.core.exception.DuplicateException;
 import com.airlinespoo.core.exception.NotFoundException;
@@ -58,7 +58,7 @@ public class ConsoleUI {
 
     private void listAll() {
         System.out.println("\n--- LISTA DE AEROLÍNEAS ---");
-        List<Airlines> airlines = service.findAll();
+        List<Airline> airlines = service.findAll();
         if (airlines.isEmpty()) {
             System.out.println("No hay aerolíneas registradas.");
         } else {
@@ -70,7 +70,7 @@ public class ConsoleUI {
         System.out.print("\nIngresa el ID de la aerolínea: ");
         int id = Integer.parseInt(scanner.nextLine());
         try {
-            Airlines airline = service.findById(id);
+            Airline airline = service.findById(id);
             System.out.println("Encontrada: " + airline);
         } catch (NotFoundException e) {
             System.out.println("Aviso: " + e.getMessage());
@@ -80,7 +80,7 @@ public class ConsoleUI {
     private void findByName() {
         System.out.print("\nIngresa el nombre o parte del nombre a buscar: ");
         String name = scanner.nextLine();
-        List<Airlines> results = service.findByName(name);
+        List<Airline> results = service.findByName(name);
         if (results.isEmpty()) {
             System.out.println("No se encontraron aerolíneas con ese criterio.");
         } else {
@@ -97,7 +97,7 @@ public class ConsoleUI {
             System.out.print("Ingresa el nombre de la aerolínea: ");
             String name = scanner.nextLine();
 
-            Airlines newAirline = new Airlines(id, name);
+            Airline newAirline = new Airline(id, name);
             service.save(newAirline);
             System.out.println("¡Aerolínea registrada con éxito!");
 
@@ -117,7 +117,7 @@ public class ConsoleUI {
             System.out.print("Ingresa el nuevo nombre: ");
             String name = scanner.nextLine();
 
-            Airlines updatedData = new Airlines(id, name);
+            Airline updatedData = new Airline(id, name);
             service.update(id, updatedData);
             System.out.println("¡Aerolínea actualizada con éxito!");
 

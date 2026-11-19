@@ -1,6 +1,6 @@
 package com.airlinespoo.airlines.service;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.airlines.repository.AirlineRepository;
 import com.airlinespoo.core.exception.DuplicateException;
 import com.airlinespoo.core.exception.NotFoundException;
@@ -17,18 +17,18 @@ public class AirlineService {
     }
 
     // Listar todas las aerolíneas
-    public List<Airlines> findAll() {
+    public List<Airline> findAll() {
         return repository.findAll();
     }
 
     // Buscar aerolínea por ID
-    public Airlines findById(int id) {
+    public Airline findById(int id) {
         return repository.findById(id)
             .orElseThrow(() -> new NotFoundException("Aerolínea con id " + id + " no encontrada"));
     }
 
     // Guardar una nueva aerolínea validando que no esté duplicada
-    public Airlines save(Airlines airline) {
+    public Airline save(Airline airline) {
         if (repository.existsByName(airline.getName())) {
             throw new DuplicateException("Ya existe una aerolínea con el nombre: " + airline.getName());
         }
@@ -36,19 +36,20 @@ public class AirlineService {
     }
 
     // Actualizar aerolínea
-    public Airlines update(int id, Airlines updatedAirline) {
-        findById(id); // Verifica que exista antes de actualizar
+    public Airline update(int id, Airline updatedAirline) {
+        findById(id);
+        updatedAirline.setId(id);
         return repository.update(updatedAirline);
     }
 
     // Eliminar aerolínea
     public void delete(int id) {
-        Airlines airline = findById(id);
-        repository.deleteById();
+        findById(id);
+        repository.deleteById(id);
     }
 
     // Búsqueda por nombre parcial
-    public List<Airlines> findByName(String name) {
+    public List<Airline> findByName(String name) {
         return repository.findByName(name);
     }
 }
