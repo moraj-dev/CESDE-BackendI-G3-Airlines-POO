@@ -62,9 +62,15 @@ public class FlightSampleData {
     /**
      * Registra ocho vuelos futuros repartidos entre diciembre de 2026 y enero de 2027.
      *
+     * <p>Si ya hay vuelos guardados (por ejemplo, en la base de datos de una ejecución
+     * anterior), no hace nada, para no intentar repetir los códigos de vuelo.</p>
+     *
      * @throws BusinessRuleException si no hay suficientes aeropuertos o aerolíneas cargados
      */
     public void load() {
+        if (!flightService.listFlights().isEmpty()) {
+            return;
+        }
         List<Airport> airports = locationService.listAirports();
         List<Airlines> airlines = airlineService.findAll();
         if (airports.size() < REQUIRED_AIRPORT_COUNT) {
