@@ -94,4 +94,7 @@ public abstract class InMemoryRepository<T extends Identifiable<ID>, ID> impleme
     protected List<T> values() {
         return new ArrayList<>(store.values());
     }
+
+    public void deleteById() {
+    }
 }
