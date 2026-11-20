@@ -21,38 +21,45 @@ public class SqlAirlineRepository extends AirlineRepository {
 
     @Override
     public Airline create(Airline airline) {
-        String sql = "INSERT INTO airlines (id, name) VALUES (?, ?)";
+        Validator.requireNotNull(airline, this.entityName());
+        String sql = "INSERT INTO dbo.tblAirlines (name) VALUES (?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setInt(1, airline.getId());
-            pstmt.setString(2, airline.getName());
-
+            pstmt.setString(1, airline.getName());
             pstmt.executeUpdate();
+
+            try (ResultSet keys = pstmt.getGeneratedKeys()) {
+                if (keys.next()) {
+                    int generatedId = keys.getInt(1);
+                    System.out.println("¡Guardado exitoso en SQL Server!");
+                    return new Airline(generatedId, airline.getName());
+                }
+            }
+
             System.out.println("¡Guardado exitoso en SQL Server!");
+            return airline;
 
         } catch (SQLException e) {
             System.out.println("ERROR SQL: " + e.getMessage());
+            return airline;
         }
-
-        return airline;
     }
 
     @Override
     public List<Airline> findAll() {
         List<Airline> airlinesList = new ArrayList<>();
-        String sql = "SELECT id, name FROM airlines";
+        String sql = "SELECT airlineId, name FROM dbo.tblAirlines";
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                int id = rs.getInt("id");
+                int id = rs.getInt("airlineId");
                 String name = rs.getString("name");
-                Airline airline = new Airline(id, name);
-                airlinesList.add(airline);
+                airlinesList.add(new Airline(id, name));
             }
 
         } catch (SQLException e) {
@@ -68,7 +75,7 @@ public class SqlAirlineRepository extends AirlineRepository {
             return false;
         }
 
-        String sql = "DELETE FROM airlines WHERE id = ?";
+        String sql = "DELETE FROM dbo.tblAirlines WHERE airlineId = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -89,7 +96,7 @@ public class SqlAirlineRepository extends AirlineRepository {
             return Optional.empty();
         }
 
-        String sql = "SELECT id, name FROM airlines WHERE id = ?";
+        String sql = "SELECT airlineId, name FROM dbo.tblAirlines WHERE airlineId = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -98,7 +105,7 @@ public class SqlAirlineRepository extends AirlineRepository {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    int foundId = rs.getInt("id");
+                    int foundId = rs.getInt("airlineId");
                     String name = rs.getString("name");
                     return Optional.of(new Airline(foundId, name));
                 }
@@ -116,7 +123,7 @@ public class SqlAirlineRepository extends AirlineRepository {
         Validator.requireNotNull(airline, this.entityName());
         Integer id = Validator.requireNotNull(airline.getId(), "id de " + this.entityName());
 
-        String sql = "UPDATE airlines SET name = ? WHERE id = ?";
+        String sql = "UPDATE dbo.tblAirlines SET name = ? WHERE airlineId = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -135,5 +142,4 @@ public class SqlAirlineRepository extends AirlineRepository {
             throw new RuntimeException("Error al actualizar la aerolínea en SQL: " + e.getMessage(), e);
         }
     }
-
 }
