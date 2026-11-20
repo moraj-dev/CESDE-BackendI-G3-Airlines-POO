@@ -1,6 +1,6 @@
 package com.airlinespoo.flights.repository;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.core.repository.Repository;
 import com.airlinespoo.flights.model.Flight;
 import com.airlinespoo.locations.model.Airport;
@@ -43,7 +43,7 @@ public interface FlightRepository extends Repository<Flight, Integer> {
      * @param airline aerolínea buscada
      * @return vuelos de esa aerolínea
      */
-    List<Flight> findByAirline(Airlines airline);
+    List<Flight> findByAirline(Airline airline);
 
     /**
      * Lista los vuelos que salen entre dos fechas, con los extremos incluidos.
@@ -72,7 +72,7 @@ public interface FlightRepository extends Repository<Flight, Integer> {
      * @param airline aerolínea buscada
      * @return cantidad de vuelos
      */
-    long countByAirline(Airlines airline);
+    long countByAirline(Airline airline);
 
     /**
      * Indica si una aerolínea tiene al menos un vuelo.
@@ -81,7 +81,7 @@ public interface FlightRepository extends Repository<Flight, Integer> {
      * @param airline aerolínea a revisar
      * @return true si tiene vuelos
      */
-    boolean existsByAirline(Airlines airline);
+    boolean existsByAirline(Airline airline);
 
     /**
      * Indica si un aeropuerto se usa como salida o llegada de algún vuelo.

@@ -1,6 +1,6 @@
 package com.airlinespoo.flights.ui;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.airlines.service.AirlineService;
 import com.airlinespoo.core.exception.BusinessRuleException;
 import com.airlinespoo.flights.model.FlightSchedule;
@@ -72,7 +72,7 @@ public class FlightSampleData {
             return;
         }
         List<Airport> airports = locationService.listAirports();
-        List<Airlines> airlines = airlineService.findAll();
+        List<Airline> airlines = airlineService.findAll();
         if (airports.size() < REQUIRED_AIRPORT_COUNT) {
             throw new BusinessRuleException("Se necesitan al menos dos aeropuertos cargados.");
         }
@@ -82,8 +82,8 @@ public class FlightSampleData {
 
         Airport firstAirport = airports.get(FIRST_POSITION);
         Airport secondAirport = airports.get(SECOND_POSITION);
-        Airlines firstAirline = airlines.get(FIRST_POSITION);
-        Airlines secondAirline = airlines.get(SECOND_POSITION);
+        Airline firstAirline = airlines.get(FIRST_POSITION);
+        Airline secondAirline = airlines.get(SECOND_POSITION);
 
         registerFlight("AF101", firstAirport, secondAirport, firstAirline,
             DECEMBER_5, MORNING_DEPARTURE, DECEMBER_5, MORNING_ARRIVAL);
@@ -104,7 +104,7 @@ public class FlightSampleData {
     }
 
     private void registerFlight(String flightName, Airport departure, Airport arrival,
-                                Airlines airline, LocalDate departureDate, LocalTime departureTime,
+                                Airline airline, LocalDate departureDate, LocalTime departureTime,
                                 LocalDate arrivalDate, LocalTime arrivalTime) {
         FlightSchedule schedule = new FlightSchedule(
             departureDate, departureTime, arrivalDate, arrivalTime);

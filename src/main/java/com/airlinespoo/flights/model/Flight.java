@@ -1,6 +1,6 @@
 package com.airlinespoo.flights.model;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.core.exception.ValidationException;
 import com.airlinespoo.core.model.Identifiable;
 import com.airlinespoo.core.util.Validator;
@@ -28,7 +28,7 @@ public class Flight implements Identifiable<Integer>, Comparable<Flight> {
     private String flightName;
     private Airport departure;
     private Airport arrival;
-    private Airlines airline;
+    private Airline airline;
     private FlightSchedule schedule;
 
     /**
@@ -37,7 +37,7 @@ public class Flight implements Identifiable<Integer>, Comparable<Flight> {
      * @throws ValidationException si el id no es positivo o algún dato no cumple las reglas
      */
     public Flight(int id, String flightName, Airport departure, Airport arrival,
-                  Airlines airline, FlightSchedule schedule) {
+                  Airline airline, FlightSchedule schedule) {
         this(flightName, departure, arrival, airline, schedule,
             (int) Validator.requirePositive(id, "id del vuelo"));
     }
@@ -49,7 +49,7 @@ public class Flight implements Identifiable<Integer>, Comparable<Flight> {
      * @throws ValidationException si algún dato no cumple las reglas del vuelo
      */
     public Flight(String flightName, Airport departure, Airport arrival,
-                  Airlines airline, FlightSchedule schedule) {
+                  Airline airline, FlightSchedule schedule) {
         this(flightName, departure, arrival, airline, schedule, UNSAVED_ID);
     }
 
@@ -58,7 +58,7 @@ public class Flight implements Identifiable<Integer>, Comparable<Flight> {
      * Recibe el id ya revisado por el constructor público que lo llama.
      */
     private Flight(String flightName, Airport departure, Airport arrival,
-                   Airlines airline, FlightSchedule schedule, int id) {
+                   Airline airline, FlightSchedule schedule, int id) {
         this.id = id;
         this.flightName = validFlightName(flightName);
         validateRoute(departure, arrival);
@@ -104,7 +104,7 @@ public class Flight implements Identifiable<Integer>, Comparable<Flight> {
         return arrival;
     }
 
-    public Airlines getAirline() {
+    public Airline getAirline() {
         return airline;
     }
 
@@ -116,7 +116,7 @@ public class Flight implements Identifiable<Integer>, Comparable<Flight> {
         this.flightName = validFlightName(flightName);
     }
 
-    public void setAirline(Airlines airline) {
+    public void setAirline(Airline airline) {
         this.airline = Validator.requireNotNull(airline, "aerolínea");
     }
 
