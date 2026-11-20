@@ -1,15 +1,18 @@
 package com.airlinespoo.airlines.ui;
 
 import com.airlinespoo.airlines.model.Airline;
+import com.airlinespoo.core.ui.Menu;
 import com.airlinespoo.airlines.service.AirlineService;
 import com.airlinespoo.core.exception.DuplicateException;
 import com.airlinespoo.core.exception.NotFoundException;
 import com.airlinespoo.core.exception.ValidationException;
 
+
+import java.awt.*;
 import java.util.List;
 import java.util.Scanner;
 
-public class ConsoleUI {
+public class ConsoleUI implements Menu {
 
     private final AirlineService service;
     private final Scanner scanner;
@@ -17,6 +20,16 @@ public class ConsoleUI {
     public ConsoleUI(AirlineService service) {
         this.service = service;
         this.scanner = new Scanner(System.in);
+    }
+
+    @Override
+    public String title() {
+        return "Aerolíneas";
+    }
+
+    @Override
+    public void run() {
+        start();
     }
 
     public void start() {
@@ -143,4 +156,5 @@ public class ConsoleUI {
             System.out.println("Error: El ID debe ser un número entero.");
         }
     }
+
 }
