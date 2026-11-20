@@ -1,0 +1,10 @@
+# Plantilla de conexión a SQL Server para el Módulo 1 (Clientes).
+# 1. Copia este archivo en la misma carpeta con el nombre db.properties
+# 2. Cambia los datos por los de tu computador.
+# db.properties NO se sube a GitHub (está en .gitignore) porque tiene la contraseña.
+
+# Servidor, puerto y base de datos.
+# trustServerCertificate=true es para el certificado de prueba de una instalación local.
+db.url=jdbc:sqlserver://localhost:1433;databaseName=AirlinesPoo;encrypt=true;trustServerCertificate=true
+db.user=airlines_app
+db.password=CAMBIA_ESTA_CONTRASEÑA

@@ -16,7 +16,7 @@ import java.util.Scanner;
  *
  * <p>Reglas de diseño:</p>
  * <ul>
- *   <li><b>Una sola instancia</b> en toda la aplicación (se crea en {@code Main}): abrir dos
+ *   <li><b>Una sola instancia</b> en toda la aplicación (se crea en {@code Main.class}): abrir dos
  *       lectores sobre la misma entrada causa errores difíciles de entender.</li>
  *   <li>Siempre lee una <b>línea completa</b> y convierte después, para evitar el problema del
  *       salto de línea pendiente que deja {@code nextInt()}.</li>

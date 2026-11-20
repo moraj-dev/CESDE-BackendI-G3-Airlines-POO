@@ -21,6 +21,13 @@
     </properties>
 
     <dependencies>
+        <!-- Driver JDBC de SQL Server (Módulo 1: repositorios con base de datos) -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.8.1.jre11</version>
+        </dependency>
+
         <!-- Solo se usa para probar el kit base del docente -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

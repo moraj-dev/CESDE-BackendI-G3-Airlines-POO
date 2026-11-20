@@ -1,28 +1,99 @@
 package com.airlinespoo.app;
 
-/**
- * Punto de entrada de Airlines-poo.
- *
- * <p>Esta es una clase <b>provisional</b> que entrega el docente para que el proyecto se
- * pueda ejecutar desde el primer día. El estudiante del Módulo 3 la reemplaza al final
- * por la versión que ensambla todos los módulos (lector de consola, generadores de ids,
- * repositorios, servicios, datos de ejemplo y menús) y arranca el menú principal.</p>
- */
-public final class Main {
+import com.airlinespoo.airlines.repository.AirlineRepository;
+import com.airlinespoo.airlines.repository.SqlAirlineRepository;
+import com.airlinespoo.airlines.service.AirlineService;
+import com.airlinespoo.airlines.ui.ConsoleUI;
+import com.airlinespoo.core.ui.ConsoleInput;
+import com.airlinespoo.core.ui.Menu;
+import com.airlinespoo.core.util.IdGenerator;
+import com.airlinespoo.customers.repository.CountryRepository;
+import com.airlinespoo.customers.repository.CustomerRepository;
+import com.airlinespoo.customers.repository.DocumentTypeRepository;
+import com.airlinespoo.customers.repository.JdbcCountryRepository;
+import com.airlinespoo.customers.repository.JdbcCustomerRepository;
+import com.airlinespoo.customers.repository.JdbcDocumentTypeRepository;
+import com.airlinespoo.customers.service.CustomerService;
+import com.airlinespoo.customers.ui.CustomerMenu;
+import com.airlinespoo.flights.repository.FlightRepository;
+import com.airlinespoo.flights.repository.JdbcFlightRepository;
+import com.airlinespoo.flights.service.FlightService;
+import com.airlinespoo.flights.ui.FlightMenu;
+import com.airlinespoo.locations.repository.AirportRepository;
+import com.airlinespoo.locations.repository.CityRepository;
+import com.airlinespoo.locations.repository.JdbcAirportRepository;
+import com.airlinespoo.locations.repository.JdbcCityRepository;
+import com.airlinespoo.locations.service.LocationService;
+import com.airlinespoo.locations.ui.LocationMenu;
+import com.airlinespoo.reservations.repository.JdbcReservationRepository;
+import com.airlinespoo.reservations.repository.ReservationRepository;
+import com.airlinespoo.reservations.service.ReservationService;
+import com.airlinespoo.reservations.ui.ReservationMenu;
 
-    private Main() {
-        // Clase de arranque: no se instancia.
-    }
+import java.util.List;
 
-    /**
-     * Arranca la aplicación.
-     *
-     * @param args argumentos de la línea de comandos (no se usan)
-     */
+public class Main {
+
     public static void main(String[] args) {
-        System.out.println("=== Airlines-poo ===");
-        System.out.println("Proyecto base listo. El kit base (paquete core) está disponible.");
-        System.out.println("Cada módulo se integra en develop mediante Pull Request.");
-        // TODO (Módulo 3): ensamblar aquí lector, generadores, repositorios, servicios y menús.
+        ConsoleInput input = new ConsoleInput();
+
+        var locationDb = new com.airlinespoo.locations.repository.DatabaseConnection();
+        var customerDb = new com.airlinespoo.customers.repository.DatabaseConnection();
+        var flightDb = new com.airlinespoo.flights.repository.DatabaseConnection();
+
+        IdGenerator locationIdGenerator = new IdGenerator(1, 1);
+        IdGenerator reservationIdGenerator = new IdGenerator(1, 1);
+        IdGenerator detailIdGenerator = new IdGenerator(1, 1);
+
+        CityRepository cityRepository = new JdbcCityRepository(locationDb);
+        AirportRepository airportRepository = new JdbcAirportRepository(locationDb);
+        LocationService locationService = new LocationService(
+            cityRepository,
+            airportRepository,
+            locationIdGenerator
+        );
+
+        AirlineRepository airlineRepository = new SqlAirlineRepository();
+        AirlineService airlineService = new AirlineService(airlineRepository);
+
+        FlightRepository flightRepository = new JdbcFlightRepository(flightDb);
+        FlightService flightService = new FlightService(
+            flightRepository,
+            locationService,
+            airlineRepository
+        );
+
+        CountryRepository countryRepository = new JdbcCountryRepository(customerDb);
+        DocumentTypeRepository documentTypeRepository = new JdbcDocumentTypeRepository(customerDb);
+        CustomerRepository customerRepository = new JdbcCustomerRepository(customerDb);
+        CustomerService customerService = new CustomerService(
+            countryRepository,
+            documentTypeRepository,
+            customerRepository
+        );
+
+        ReservationRepository reservationRepository = new JdbcReservationRepository(
+            flightDb::open,
+            customerRepository,
+            flightRepository
+        );
+        ReservationService reservationService = new ReservationService(
+            reservationRepository,
+            customerService,
+            flightService,
+            reservationIdGenerator,
+            detailIdGenerator
+        );
+
+        List<Menu> menus = List.of(
+            new LocationMenu(locationService, input),
+            new ConsoleUI(airlineService),
+            new FlightMenu(flightService, locationService, airlineService, input),
+            new CustomerMenu(customerService, input),
+            new ReservationMenu(reservationService, customerService, flightService, input)
+        );
+
+        MainMenu mainMenu = new MainMenu(menus, input);
+        mainMenu.run();
     }
 }
