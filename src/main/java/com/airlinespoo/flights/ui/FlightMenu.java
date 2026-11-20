@@ -1,6 +1,6 @@
 package com.airlinespoo.flights.ui;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.airlines.service.AirlineService;
 import com.airlinespoo.core.exception.AirlinesException;
 import com.airlinespoo.core.exception.ValidationException;
@@ -176,7 +176,7 @@ public class FlightMenu implements Menu {
     private void printMonthlyReport() {
         int year = consoleInput.readInt("Año", MIN_REPORT_YEAR, MAX_REPORT_YEAR);
         int month = consoleInput.readInt("Mes", MIN_MONTH, MAX_MONTH);
-        Map<Airlines, List<FlightReportRow>> report =
+        Map<Airline, List<FlightReportRow>> report =
             flightService.listFlightsByAirlineInMonth(year, month);
         if (report.isEmpty()) {
             System.out.println("Sin vuelos en ese periodo.");
@@ -195,7 +195,7 @@ public class FlightMenu implements Menu {
     }
 
     private int requestAirlineId() {
-        List<Airlines> airlines = airlineService.findAll();
+        List<Airline> airlines = airlineService.findAll();
         if (airlines.isEmpty()) {
             throw new ValidationException("No hay aerolíneas registradas.");
         }
@@ -256,8 +256,8 @@ public class FlightMenu implements Menu {
         System.out.println("Aerolínea: %s".formatted(flight.getAirline().getName()));
     }
 
-    private void printReportGroups(Map<Airlines, List<FlightReportRow>> report) {
-        for (Map.Entry<Airlines, List<FlightReportRow>> group : report.entrySet()) {
+    private void printReportGroups(Map<Airline, List<FlightReportRow>> report) {
+        for (Map.Entry<Airline, List<FlightReportRow>> group : report.entrySet()) {
             System.out.println("Aerolínea: %s".formatted(group.getKey().getName()));
             for (FlightReportRow row : group.getValue()) {
                 FlightSchedule schedule = new FlightSchedule(

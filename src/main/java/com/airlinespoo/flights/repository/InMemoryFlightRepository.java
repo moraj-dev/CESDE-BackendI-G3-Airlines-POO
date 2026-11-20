@@ -1,6 +1,6 @@
 package com.airlinespoo.flights.repository;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.core.repository.InMemoryRepository;
 import com.airlinespoo.core.util.IdGenerator;
 import com.airlinespoo.core.util.Validator;
@@ -63,7 +63,7 @@ public class InMemoryFlightRepository extends InMemoryRepository<Flight, Integer
     }
 
     @Override
-    public List<Flight> findByAirline(Airlines airline) {
+    public List<Flight> findByAirline(Airline airline) {
         return values().stream()
             .filter(flight -> flight.getAirline().equals(airline))
             .toList();
@@ -88,12 +88,12 @@ public class InMemoryFlightRepository extends InMemoryRepository<Flight, Integer
     }
 
     @Override
-    public long countByAirline(Airlines airline) {
+    public long countByAirline(Airline airline) {
         return findByAirline(airline).size();
     }
 
     @Override
-    public boolean existsByAirline(Airlines airline) {
+    public boolean existsByAirline(Airline airline) {
         return countByAirline(airline) > 0;
     }
 

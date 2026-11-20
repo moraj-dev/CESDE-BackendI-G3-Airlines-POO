@@ -1,6 +1,6 @@
 package com.airlinespoo.flights.service;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.airlines.repository.AirlineRepository;
 import com.airlinespoo.core.exception.DuplicateException;
 import com.airlinespoo.core.exception.NotFoundException;
@@ -98,7 +98,7 @@ public class FlightService {
 
     /** Lista los vuelos de una aerolínea ordenados por salida. */
     public List<Flight> listFlightsByAirline(int airlineId) {
-        Airlines airline = findAirline(airlineId);
+        Airline airline = findAirline(airlineId);
         return flightRepository.findByAirline(airline).stream().sorted().toList();
     }
 
@@ -129,7 +129,7 @@ public class FlightService {
      * @return mapa aerolínea → filas del reporte, en el orden descrito
      * @throws ValidationException si el año o el mes están fuera de rango
      */
-    public Map<Airlines, List<FlightReportRow>> listFlightsByAirlineInMonth(int year, int month) {
+    public Map<Airline, List<FlightReportRow>> listFlightsByAirlineInMonth(int year, int month) {
         Validator.requireInRange(year, MIN_REPORT_YEAR, MAX_REPORT_YEAR, "año");
         Validator.requireInRange(month, 1, 12, "mes");
         LocalDate first = LocalDate.of(year, month, 1);
@@ -140,7 +140,7 @@ public class FlightService {
                 .comparing((Flight flight) -> flight.getAirline().getName().toLowerCase())
                 .thenComparing(Comparator.naturalOrder()));
 
-        Map<Airlines, List<FlightReportRow>> report = new LinkedHashMap<>();
+        Map<Airline, List<FlightReportRow>> report = new LinkedHashMap<>();
         for (Flight flight : flights) {
             report.computeIfAbsent(flight.getAirline(), airline -> new ArrayList<>())
                     .add(FlightReportRow.from(flight));
@@ -163,7 +163,7 @@ public class FlightService {
         return flightRepository.existsByAirport(airport);
     }
 
-    private Airlines findAirline(int airlineId) {
+    private Airline findAirline(int airlineId) {
         return airlineRepository.findById(airlineId)
             .orElseThrow(() -> new NotFoundException("aerolínea", airlineId));
     }

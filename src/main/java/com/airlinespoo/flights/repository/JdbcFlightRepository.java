@@ -1,6 +1,6 @@
 package com.airlinespoo.flights.repository;
 
-import com.airlinespoo.airlines.model.Airlines;
+import com.airlinespoo.airlines.model.Airline;
 import com.airlinespoo.core.exception.AirlinesException;
 import com.airlinespoo.core.exception.NotFoundException;
 import com.airlinespoo.core.util.Validator;
@@ -206,7 +206,7 @@ public class JdbcFlightRepository implements FlightRepository {
 
     /** SELECT ... WHERE AirlineId = ? */
     @Override
-    public List<Flight> findByAirline(Airlines airline) {
+    public List<Flight> findByAirline(Airline airline) {
         return queryList(SELECT_BY_AIRLINE, airline.getId());
     }
 
@@ -225,13 +225,13 @@ public class JdbcFlightRepository implements FlightRepository {
 
     /** SELECT COUNT(*) ... WHERE AirlineId = ? */
     @Override
-    public long countByAirline(Airlines airline) {
+    public long countByAirline(Airline airline) {
         return queryCount(COUNT_BY_AIRLINE, airline.getId());
     }
 
     /** SELECT 1 ... WHERE AirlineId = ? */
     @Override
-    public boolean existsByAirline(Airlines airline) {
+    public boolean existsByAirline(Airline airline) {
         return queryExists(EXISTS_BY_AIRLINE, airline.getId());
     }
 
@@ -328,7 +328,7 @@ public class JdbcFlightRepository implements FlightRepository {
         Airport arrival = new Airport(UUID.fromString(row.getString("ArrAirportId")),
             row.getString("ArrAirportName"), arrivalCity);
 
-        Airlines airline = new Airlines(row.getInt("AirlineId"), row.getString("AirlineName"));
+        Airline airline = new Airline(row.getInt("AirlineId"), row.getString("AirlineName"));
 
         FlightSchedule schedule = new FlightSchedule(
             row.getObject("DateDeparture", LocalDate.class),
