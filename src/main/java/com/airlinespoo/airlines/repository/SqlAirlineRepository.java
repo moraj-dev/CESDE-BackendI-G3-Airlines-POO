@@ -22,21 +22,15 @@ public class SqlAirlineRepository extends AirlineRepository {
     @Override
     public Airline create(Airline airline) {
         Validator.requireNotNull(airline, this.entityName());
-        String sql = "INSERT INTO dbo.tblAirlines (name) VALUES (?)";
+        Integer id = Validator.requireNotNull(airline.getId(), "id de " + this.entityName());
+        String sql = "INSERT INTO dbo.tblAirlines (airlineId, name) VALUES (?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, airline.getName());
+            pstmt.setInt(1, id);
+            pstmt.setString(2, airline.getName());
             pstmt.executeUpdate();
-
-            try (ResultSet keys = pstmt.getGeneratedKeys()) {
-                if (keys.next()) {
-                    int generatedId = keys.getInt(1);
-                    System.out.println("¡Guardado exitoso en SQL Server!");
-                    return new Airline(generatedId, airline.getName());
-                }
-            }
 
             System.out.println("¡Guardado exitoso en SQL Server!");
             return airline;
@@ -46,7 +40,6 @@ public class SqlAirlineRepository extends AirlineRepository {
             return airline;
         }
     }
-
     @Override
     public List<Airline> findAll() {
         List<Airline> airlinesList = new ArrayList<>();
