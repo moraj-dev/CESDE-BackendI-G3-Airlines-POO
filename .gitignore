@@ -27,3 +27,6 @@ desktop.ini
 *.log
 *.tmp
 hs_err_pid*
+
+# Configuración local de conexión SQL Server
+src/main/resources/db.properties
